@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Is Your Finance Team Ready for AI? | GAAP.nyc</title>
+<meta name="description" content="A 3-minute diagnostic for founders and CEOs. Find out if your finance function is Legacy, Transitional, or AI-Ready." />
+<meta property="og:title" content="Is Your Finance Team Ready for AI?" />
+<meta property="og:description" content="10 questions. 3 minutes. A brutally honest assessment of where your finance function stands." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://gaap.nyc" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Is Your Finance Team Ready for AI?" />
+<meta name="twitter:description" content="10 questions. 3 minutes. A brutally honest assessment of where your finance function stands." />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background-color: #141414; color: #F5F0E8; font-family: 'Source Serif 4', Georgia, serif; -webkit-font-smoothing: antialiased; }
+  #root { min-height: 100vh; display: flex; justify-content: center; padding: 60px 32px 80px; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const QUESTIONS = [
+  {
+    id: 1,
+    category: "CLOSE PROCESS",
+    question: "How long does your monthly close take?",
+    options: [
+      { text: "15+ business days", score: 1, label: "Legacy" },
+      { text: "8\u201314 business days", score: 2, label: "Transitional" },
+      { text: "5 days or fewer", score: 3, label: "AI-Ready" },
+    ],
+  },
+  {
+    id: 2,
+    category: "AP & PAYABLES",
+    question: "How does your team process invoices and payables?",
+    options: [
+      { text: "Manual data entry, email approvals, paper checks", score: 1, label: "Legacy" },
+      { text: "Some automation (e.g. bill.com) but manual coding", score: 2, label: "Transitional" },
+      { text: "AI-driven intake, auto-coding, automated approvals & payments", score: 3, label: "AI-Ready" },
+    ],
+  },
+  {
+    id: 3,
+    category: "TECHNICAL DEPTH",
+    question: "Can anyone on your finance team write code, build automations, or query a database?",
+    options: [
+      { text: "No. We use Excel and that\u2019s it.", score: 1, label: "Legacy" },
+      { text: "Some spreadsheet macros or basic SQL", score: 2, label: "Transitional" },
+      { text: "Yes. Python, SQL, API integrations, or AI tools in daily workflows", score: 3, label: "AI-Ready" },
+    ],
+  },
+  {
+    id: 4,
+    category: "CASH VISIBILITY",
+    question: "How quickly can you answer: \"What's our exact cash position right now?\"",
+    options: [
+      { text: "I\u2019d need to log into multiple banks and check manually", score: 1, label: "Legacy" },
+      { text: "I can get it within an hour from our accounting system", score: 2, label: "Transitional" },
+      { text: "Real-time dashboard. I know right now.", score: 3, label: "AI-Ready" },
+    ],
+  },
+  {
+    id: 5,
+    category: "FORECASTING",
+    question: "How does your team build financial forecasts?",
+    options: [
+      { text: "Last year plus a growth percentage", score: 1, label: "Legacy" },
+      { text: "Driver-based model in Excel, updated quarterly", score: 2, label: "Transitional" },
+      { text: "Dynamic models with live data feeds, scenario analysis, AI-assisted projections", score: 3, label: "AI-Ready" },
+    ],
+  },
+  {
+    id: 6,
+    category: "DATA INFRASTRUCTURE",
+    question: "Where does your financial data live?",
+    options: [
+      { text: "QuickBooks or spreadsheets. That\u2019s the whole system.", score: 1, label: "Legacy" },
+      { text: "ERP with some integrations, but data is siloed", score: 2, label: "Transitional" },
+      { text: "Centralized data warehouse connecting ERP, ops tools, and business systems", score: 3, label: "AI-Ready" },
+    ],
+  },
+  {
+    id: 7,
+    category: "REPORTING",
+    question: "How do you produce management reports and dashboards?",
+    options: [
+      { text: "Copy-paste from QuickBooks into Excel, email as PDF", score: 1, label: "Legacy" },
+      { text: "Semi-automated reports, some dashboards, still manual formatting", score: 2, label: "Transitional" },
+      { text: "Automated dashboards with live data, self-serve for stakeholders", score: 3, label: "AI-Ready" },
+    ],
+  },
+  {
+    id: 8,
+    category: "AI ADOPTION",
+    question: "How is your finance team using AI today?",
+    options: [
+      { text: "They\u2019re not. Maybe ChatGPT for emails.", score: 1, label: "Legacy" },
+      { text: "Some experimentation. Summarizing docs, basic analysis.", score: 2, label: "Transitional" },
+      { text: "AI is embedded in workflows: AP automation, anomaly detection, forecasting, coding", score: 3, label: "AI-Ready" },
+    ],
+  },
+  {
+    id: 9,
+    category: "SCALABILITY",
+    question: "If your revenue doubled tomorrow, what would break first?",
+    options: [
+      { text: "Everything. Close, AP, reporting, cash management. All manual.", score: 1, label: "Legacy" },
+      { text: "Some systems would hold, but we\u2019d need to hire 2\u20133 more people", score: 2, label: "Transitional" },
+      { text: "Our systems scale. We\u2019d need maybe one more person.", score: 3, label: "AI-Ready" },
+    ],
+  },
+  {
+    id: 10,
+    category: "STRATEGIC ROLE",
+    question: "What role does your finance team play in company strategy?",
+    options: [
+      { text: "Bookkeeping and compliance. They report what happened.", score: 1, label: "Legacy" },
+      { text: "Some involvement in planning, but mostly backward-looking", score: 2, label: "Transitional" },
+      { text: "Finance is at the table. Real-time insights drive decisions.", score: 3, label: "AI-Ready" },
+    ],
+  },
+];
+
+const TIERS = {
+  legacy: {
+    title: "LEGACY",
+    subtitle: "Your finance function is operating in 2015.",
+    color: "#E63946",
+    description: "Your finance team is doing the job that existed 10 years ago. Manual processes, no automation, no data infrastructure. This doesn\u2019t just slow you down \u2014 it means every financial decision you make is based on stale, incomplete information. At your next board meeting, your investors are going to start asking about AI readiness. You don\u2019t have an answer yet.",
+    risk: "You are one audit, one scaling event, or one board question away from a crisis of confidence in your numbers.",
+  },
+  transitional: {
+    title: "TRANSITIONAL",
+    subtitle: "You\u2019ve started modernizing. You\u2019re not done.",
+    color: "#F4A261",
+    description: "You have some systems in place, maybe an ERP, maybe some automation. But you\u2019re in the dangerous middle: too advanced to feel urgent pain, too behind to actually scale. Your finance team is doing things faster, but not fundamentally differently. The gap between you and an AI-ready operation is where margin, speed, and strategic advantage live.",
+    risk: "You\u2019re spending on tools but not getting the compounding returns because the team and workflows haven\u2019t transformed.",
+  },
+  aiReady: {
+    title: "AI-READY",
+    subtitle: "You\u2019re building the finance function of the future.",
+    color: "#2A9D8F",
+    description: "Your finance team is a competitive advantage. Fast close, real-time visibility, automated workflows, and data infrastructure that connects across the business. You\u2019re not just keeping the books \u2014 you\u2019re generating insights that drive revenue and reduce risk. This is rare. Fewer than 5% of companies at your stage operate at this level.",
+    risk: "Your risk is complacency. The landscape is moving fast. Stay aggressive.",
+  },
+};
+
+function getGaps(answers) {
+  const gaps = [];
+  answers.forEach((a) => {
+    const q = QUESTIONS.find((q) => q.id === a.questionId);
+    if (a.score <= 1) gaps.push({ category: q.category, severity: "critical" });
+    else if (a.score <= 2) gaps.push({ category: q.category, severity: "moderate" });
+  });
+  return gaps;
+}
+
+function getTier(score) {
+  if (score <= 16) return "legacy";
+  if (score <= 23) return "transitional";
+  return "aiReady";
+}
+
+function ProgressBar({ current, total }) {
+  return (
+    <div style={{ display: "flex", gap: "6px", marginBottom: "48px" }}>
+      {Array.from({ length: total }).map((_, i) => (
+        <div key={i} style={{ flex: 1, height: "3px", borderRadius: "2px", backgroundColor: i <= current ? "#C8B273" : "rgba(200,178,115,0.15)", transition: "background-color 0.4s ease" }} />
+      ))}
+    </div>
+  );
+}
+
+function IntroScreen({ onStart }) {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setTimeout(() => setVisible(true), 100); }, []);
+  return (
+    <div style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(20px)", transition: "all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)" }}>
+      <div style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "11px", letterSpacing: "5px", color: "#C8B273", marginBottom: "32px", textTransform: "uppercase" }}>GAAP.nyc diagnostic</div>
+      <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "clamp(32px, 5vw, 56px)", fontWeight: 400, lineHeight: 1.15, color: "#F5F0E8", marginBottom: "32px", maxWidth: "700px" }}>
+        Is Your Finance Team<br /><span style={{ color: "#C8B273", fontStyle: "italic" }}>Ready for AI?</span>
+      </h1>
+      <p style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "17px", lineHeight: 1.7, color: "rgba(245,240,232,0.6)", maxWidth: "520px", marginBottom: "48px" }}>
+        10 questions. 3 minutes. A brutally honest assessment of where your finance function stands — and what breaks when you scale.
+      </p>
+      <button onClick={onStart} style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "14px", letterSpacing: "3px", textTransform: "uppercase", padding: "18px 48px", backgroundColor: "transparent", border: "1px solid #C8B273", color: "#C8B273", cursor: "pointer", transition: "all 0.3s ease" }}
+        onMouseEnter={(e) => { e.target.style.backgroundColor = "#C8B273"; e.target.style.color = "#1A1A1A"; }}
+        onMouseLeave={(e) => { e.target.style.backgroundColor = "transparent"; e.target.style.color = "#C8B273"; }}>
+        Begin Assessment
+      </button>
+    </div>
+  );
+}
+
+function QuestionScreen({ question, questionIndex, total, onAnswer }) {
+  const [selected, setSelected] = useState(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setVisible(false); setSelected(null); const t = setTimeout(() => setVisible(true), 50); return () => clearTimeout(t); }, [question.id]);
+  const handleSelect = (option, index) => { setSelected(index); setTimeout(() => onAnswer(option), 500); };
+
+  return (
+    <div style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(16px)", transition: "all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)" }}>
+      <ProgressBar current={questionIndex} total={total} />
+      <div style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "11px", letterSpacing: "4px", color: "#C8B273", marginBottom: "16px", textTransform: "uppercase" }}>{question.category}</div>
+      <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "clamp(22px, 3.5vw, 32px)", fontWeight: 400, lineHeight: 1.35, color: "#F5F0E8", marginBottom: "40px", maxWidth: "600px" }}>{question.question}</h2>
+      <div style={{ display: "flex", flexDirection: "column", gap: "16px", maxWidth: "600px" }}>
+        {question.options.map((opt, i) => (
+          <button key={i} onClick={() => handleSelect(opt, i)}
+            style={{ display: "flex", alignItems: "flex-start", gap: "16px", padding: "20px 24px", backgroundColor: selected === i ? "rgba(200,178,115,0.1)" : "rgba(245,240,232,0.03)", border: selected === i ? "1px solid rgba(200,178,115,0.5)" : "1px solid rgba(245,240,232,0.08)", borderRadius: "2px", cursor: "pointer", textAlign: "left", transition: "all 0.3s ease", outline: "none" }}
+            onMouseEnter={(e) => { if (selected !== i) { e.currentTarget.style.borderColor = "rgba(200,178,115,0.3)"; e.currentTarget.style.backgroundColor = "rgba(245,240,232,0.05)"; } }}
+            onMouseLeave={(e) => { if (selected !== i) { e.currentTarget.style.borderColor = "rgba(245,240,232,0.08)"; e.currentTarget.style.backgroundColor = "rgba(245,240,232,0.03)"; } }}>
+            <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "14px", color: selected === i ? "#C8B273" : "rgba(245,240,232,0.25)", minWidth: "24px", paddingTop: "1px", transition: "color 0.3s ease" }}>{String.fromCharCode(65 + i)}</span>
+            <span style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "15px", lineHeight: 1.6, color: selected === i ? "#F5F0E8" : "rgba(245,240,232,0.7)", transition: "color 0.3s ease" }}>{opt.text}</span>
+          </button>
+        ))}
+      </div>
+      <div style={{ marginTop: "40px", fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "13px", color: "rgba(245,240,232,0.25)" }}>{questionIndex + 1} of {total}</div>
+    </div>
+  );
+}
+
+function ResultsScreen({ answers }) {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => { setTimeout(() => setVisible(true), 100); }, []);
+  const totalScore = answers.reduce((sum, a) => sum + a.score, 0);
+  const tierKey = getTier(totalScore);
+  const tier = TIERS[tierKey];
+  const gaps = getGaps(answers);
+  const criticalGaps = gaps.filter((g) => g.severity === "critical");
+  const moderateGaps = gaps.filter((g) => g.severity === "moderate");
+  const allGaps = [...criticalGaps, ...moderateGaps];
+  const scorePercent = ((totalScore - 10) / 20) * 100;
+
+  const ghostBtnStyle = { fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "13px", letterSpacing: "3px", textTransform: "uppercase", padding: "16px 36px", backgroundColor: "transparent", border: "1px solid rgba(245,240,232,0.15)", color: "rgba(245,240,232,0.5)", cursor: "pointer", textDecoration: "none", transition: "all 0.3s ease" };
+
+  return (
+    <div style={{ opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(20px)", transition: "all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)" }}>
+      <div style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "11px", letterSpacing: "5px", color: "#C8B273", marginBottom: "32px", textTransform: "uppercase" }}>Your Diagnostic</div>
+
+      <div style={{ display: "flex", alignItems: "baseline", gap: "20px", marginBottom: "12px" }}>
+        <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "72px", fontWeight: 400, color: tier.color, lineHeight: 1 }}>{totalScore}</span>
+        <span style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "14px", color: "rgba(245,240,232,0.35)" }}>/ 30</span>
+      </div>
+
+      <div style={{ width: "100%", maxWidth: "500px", height: "4px", backgroundColor: "rgba(245,240,232,0.06)", borderRadius: "2px", marginBottom: "32px", position: "relative" }}>
+        <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: `${scorePercent}%`, backgroundColor: tier.color, borderRadius: "2px", transition: "width 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)" }} />
+        <div style={{ position: "absolute", left: "35%", top: "-8px", bottom: "-8px", width: "1px", backgroundColor: "rgba(245,240,232,0.15)" }} />
+        <div style={{ position: "absolute", left: "70%", top: "-8px", bottom: "-8px", width: "1px", backgroundColor: "rgba(245,240,232,0.15)" }} />
+      </div>
+
+      <div style={{ display: "flex", maxWidth: "500px", marginBottom: "48px" }}>
+        {["LEGACY", "TRANSITIONAL", "AI-READY"].map((t, i) => (
+          <span key={t} style={{ flex: i === 1 ? 1.2 : 1, fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "10px", letterSpacing: "2px", color: t === tier.title ? tier.color : "rgba(245,240,232,0.2)", textAlign: i === 0 ? "left" : i === 2 ? "right" : "center" }}>{t}</span>
+        ))}
+      </div>
+
+      <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: "clamp(24px, 3.5vw, 36px)", fontWeight: 400, color: "#F5F0E8", marginBottom: "8px" }}>{tier.subtitle}</h2>
+      <p style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "15px", lineHeight: 1.8, color: "rgba(245,240,232,0.6)", maxWidth: "560px", marginBottom: "16px" }}>{tier.description}</p>
+      <p style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "14px", lineHeight: 1.7, color: tier.color, maxWidth: "560px", marginBottom: "48px", fontStyle: "italic" }}>{tier.risk}</p>
+
+      {allGaps.length > 0 && (
+        <div style={{ marginBottom: "48px", maxWidth: "500px" }}>
+          <div style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "11px", letterSpacing: "4px", color: "#C8B273", marginBottom: "20px", textTransform: "uppercase" }}>Your Gaps</div>
+          {allGaps.map((g, i) => (
+            <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 0", borderBottom: "1px solid rgba(245,240,232,0.06)" }}>
+              <span style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "14px", color: "rgba(245,240,232,0.7)" }}>{g.category}</span>
+              <span style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "11px", letterSpacing: "2px", textTransform: "uppercase", color: g.severity === "critical" ? "#E63946" : "#F4A261" }}>{g.severity}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div style={{ borderTop: "1px solid rgba(245,240,232,0.08)", paddingTop: "40px", marginTop: "8px" }}>
+        <p style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "15px", lineHeight: 1.8, color: "rgba(245,240,232,0.5)", maxWidth: "480px", marginBottom: "32px" }}>
+          This diagnostic was built by <span style={{ color: "#F5F0E8" }}>Lorenzo Geraci</span> — a data-first, AI-first Controller who builds finance infrastructure for companies that refuse to operate like it's 2015.
+        </p>
+        <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+          <a href="https://www.linkedin.com/in/lor3nzo/" target="_blank" rel="noopener noreferrer"
+            style={{ fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "13px", letterSpacing: "3px", textTransform: "uppercase", padding: "16px 36px", backgroundColor: "#C8B273", border: "none", color: "#1A1A1A", cursor: "pointer", textDecoration: "none", transition: "all 0.3s ease" }}
+            onMouseEnter={(e) => { e.target.style.backgroundColor = "#D4C08A"; }}
+            onMouseLeave={(e) => { e.target.style.backgroundColor = "#C8B273"; }}>
+            Let's Talk
+          </a>
+          <a href="https://i-love-spreadsheets.com" target="_blank" rel="noopener noreferrer" style={{...ghostBtnStyle}}
+            onMouseEnter={(e) => { e.target.style.borderColor = "rgba(200,178,115,0.3)"; e.target.style.color = "#C8B273"; }}
+            onMouseLeave={(e) => { e.target.style.borderColor = "rgba(245,240,232,0.15)"; e.target.style.color = "rgba(245,240,232,0.5)"; }}>
+            See My Work
+          </a>
+          <a href="https://github.com/lor3nzo" target="_blank" rel="noopener noreferrer" style={{...ghostBtnStyle}}
+            onMouseEnter={(e) => { e.target.style.borderColor = "rgba(200,178,115,0.3)"; e.target.style.color = "#C8B273"; }}
+            onMouseLeave={(e) => { e.target.style.borderColor = "rgba(245,240,232,0.15)"; e.target.style.color = "rgba(245,240,232,0.5)"; }}>
+            See My Code
+          </a>
+        </div>
+      </div>
+
+      <button onClick={() => window.location.reload()}
+        style={{ marginTop: "48px", fontFamily: "'Source Serif 4', Georgia, serif", fontSize: "12px", color: "rgba(245,240,232,0.2)", background: "none", border: "none", cursor: "pointer", letterSpacing: "2px", textTransform: "uppercase" }}
+        onMouseEnter={(e) => (e.target.style.color = "rgba(245,240,232,0.5)")}
+        onMouseLeave={(e) => (e.target.style.color = "rgba(245,240,232,0.2)")}>
+        Retake Assessment
+      </button>
+    </div>
+  );
+}
+
+function App() {
+  const [screen, setScreen] = useState("intro");
+  const [currentQ, setCurrentQ] = useState(0);
+  const [answers, setAnswers] = useState([]);
+
+  const handleAnswer = (option) => {
+    const newAnswers = [...answers, { questionId: QUESTIONS[currentQ].id, score: option.score }];
+    setAnswers(newAnswers);
+    if (currentQ < QUESTIONS.length - 1) setCurrentQ(currentQ + 1);
+    else setScreen("results");
+  };
+
+  return (
+    <div style={{ maxWidth: "680px", width: "100%" }}>
+      {screen === "intro" && <IntroScreen onStart={() => setScreen("quiz")} />}
+      {screen === "quiz" && <QuestionScreen question={QUESTIONS[currentQ]} questionIndex={currentQ} total={QUESTIONS.length} onAnswer={handleAnswer} />}
+      {screen === "results" && <ResultsScreen answers={answers} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
